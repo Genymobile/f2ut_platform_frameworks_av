@@ -988,7 +988,8 @@ status_t StagefrightRecorder::start() {
             params |= IMediaPlayerService::kBatteryDataTrackVideo;
         }
 
-        addBatteryData(params);
+        // Disabled because mediaservice is no longer used
+        //addBatteryData(params);
     }
 
     return status;
@@ -1253,11 +1254,14 @@ status_t StagefrightRecorder::setupMPEG2TSRecording() {
             return ERROR_UNSUPPORTED;
         }
 
+        // TODO: Disabled until PulseAudio replaces AudioFlinger
+#if 0
         status_t err = setupAudioEncoder(writer);
 
         if (err != OK) {
             return err;
         }
+#endif
     }
 
     if (mVideoSource < VIDEO_SOURCE_LIST_END) {
@@ -1845,11 +1849,15 @@ status_t StagefrightRecorder::setupMPEG4orWEBMRecording() {
         // This help make sure that the "recoding" sound is suppressed for
         // camcorder applications in the recorded files.
         // TODO Audio source is currently unsupported for webm output; vorbis encoder needed.
+#if 0
+// TODO: Disable instantiating the audio encoder until we can successfully
+// use PulseAudio for getting the mic input
         if (!mCaptureTimeLapse && (mAudioSource != AUDIO_SOURCE_CNT)) {
             err = setupAudioEncoder(writer);
             if (err != OK) return err;
             mTotalBitRate += mAudioBitRate;
         }
+#endif
 
         if (mInterleaveDurationUs > 0) {
             reinterpret_cast<MPEG4Writer *>(writer.get())->
@@ -1934,7 +1942,8 @@ status_t StagefrightRecorder::pause() {
             params |= IMediaPlayerService::kBatteryDataTrackVideo;
         }
 
-        addBatteryData(params);
+        // Disabled because mediaservice is no longer used
+        //addBatteryData(params);
     }
 
 
@@ -1990,8 +1999,8 @@ status_t StagefrightRecorder::stop() {
         if (mVideoSource != VIDEO_SOURCE_LIST_END) {
             params |= IMediaPlayerService::kBatteryDataTrackVideo;
         }
-
-        addBatteryData(params);
+		// Disabled because mediaservice is no longer used
+        //addBatteryData(params);
     }
 
     if (recorderStarted) {
