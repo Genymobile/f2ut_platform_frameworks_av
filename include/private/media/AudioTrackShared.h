@@ -234,13 +234,9 @@ public:
     // Call to force an obtainBuffer() to return quickly with -EINTR
     void        interrupt();
 
-    size_t      getPosition() {
-        return mEpoch + mCblk->mServer;
-    }
+    size_t      getPosition();
 
-    void        setEpoch(size_t epoch) {
-        mEpoch = epoch;
-    }
+    void        setEpoch(size_t epoch);
 
     void        setMinimum(size_t minimum) {
         // This can only happen on a 64-bit client
@@ -254,9 +250,7 @@ public:
     // in order for the client to be aligned at start of buffer
     virtual size_t  getMisalignment();
 
-    size_t      getEpoch() const {
-        return mEpoch;
-    }
+    size_t      getEpoch() const;
 
     size_t      getFramesFilled();
 

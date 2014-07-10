@@ -31,6 +31,8 @@
 #include <cutils/properties.h>
 #include <system/audio.h>
 
+#include <media/IMediaRecorderClient.h>
+
 #define AUDIO_RECORD_DEFAULT_BUFFER_DURATION 20
 namespace android {
 
@@ -41,7 +43,9 @@ static void AudioRecordCallbackFunction(int event, void *user, void *info) {
 
 AudioSource::AudioSource(
         audio_source_t inputSource, uint32_t sampleRate, uint32_t channelCount)
-    : mStarted(false),
+    : mAudioReadCb(0),
+      mAudioReadContext(0),
+      mStarted(false),
       mSampleRate(sampleRate),
       mTrackMaxAmplitude(false),
       mStartTimeUs(0),
@@ -224,6 +228,15 @@ status_t AudioSource::initCheck() const {
     return mInitCheck;
 }
 
+status_t AudioSource::setListener(const sp<IMediaRecorderClient>& listener)
+{
+    Mutex::Autolock autoLock(mLock);
+    mListener = listener;
+
+    return NO_ERROR;
+}
+
+
 status_t AudioSource::start(MetaData *params) {
     Mutex::Autolock autoLock(mLock);
     if (mRecPaused) {
@@ -265,7 +278,6 @@ status_t AudioSource::pause() {
 }
 
 void AudioSource::releaseQueuedFrames_l() {
-    ALOGV("releaseQueuedFrames_l");
     List<MediaBuffer *>::iterator it;
     while (!mBuffersReceived.empty()) {
         it = mBuffersReceived.begin();
@@ -307,6 +319,25 @@ status_t AudioSource::reset() {
         mTempBuf.frameCount = 0;
     }
     return OK;
+}
+
+void AudioSource::setReadAudioCb(on_audio_source_read_audio cb, void *context)
+{
+    mAudioReadCb = cb;
+    mAudioReadContext = context;
+
+    // RecordThread has been setup successfully by this point, so signal
+    // the callback to trigger the writer to begin read/writing mic data
+    triggerReadAudio();
+}
+
+void AudioSource::triggerReadAudio()
+{
+    if (mAudioReadCb != NULL) {
+        mAudioReadCb(mAudioReadContext);
+    }
+    else
+        ALOGW("Couldn't read new audio data since mAudioReadCb is NULL");
 }
 
 sp<MetaData> AudioSource::getFormat() {
@@ -408,7 +439,6 @@ status_t AudioSource::read(
 }
 
 void AudioSource::signalBufferReturned(MediaBuffer *buffer) {
-    ALOGV("signalBufferReturned: %p", buffer->data());
     Mutex::Autolock autoLock(mLock);
     --mNumClientOwnedBuffers;
     buffer->setObserver(0);

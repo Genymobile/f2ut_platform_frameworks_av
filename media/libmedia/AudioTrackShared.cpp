@@ -331,6 +331,21 @@ void ClientProxy::interrupt()
     }
 }
 
+size_t ClientProxy::getPosition() {
+    ALOGV("getPosition(): position: %d, mEpoch: %d, mCblk->mServer: %d", mEpoch + mCblk->mServer, mEpoch, mCblk->mServer);
+    return mEpoch + mCblk->mServer;
+}
+
+void ClientProxy::setEpoch(size_t epoch) {
+    ALOGV("setEpoch(): %d", epoch);
+    mEpoch = epoch;
+}
+
+size_t ClientProxy::getEpoch() const {
+    ALOGV("getEpoch(): %d", mEpoch);
+    return mEpoch;
+}
+
 size_t ClientProxy::getMisalignment()
 {
     audio_track_cblk_t* cblk = mCblk;

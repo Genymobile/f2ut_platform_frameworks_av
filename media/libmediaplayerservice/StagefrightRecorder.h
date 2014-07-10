@@ -79,6 +79,7 @@ struct StagefrightRecorder : public MediaRecorderBase {
     virtual status_t dump(int fd, const Vector<String16>& args) const;
     // Querying a SurfaceMediaSourcer
     virtual sp<IGraphicBufferProducer> querySurfaceMediaSource() const;
+    static void onReadAudioCb(void *context);
 
 private:
     AppOpsManager mAppOpsManager;
@@ -142,6 +143,7 @@ private:
     // frame buffers will be queued and dequeued
     sp<IGraphicBufferProducer> mGraphicBufferProducer;
     sp<ALooper> mLooper;
+	void onReadAudio();
 
     sp<RecorderExtendedStats> mRecorderExtendedStats;
 

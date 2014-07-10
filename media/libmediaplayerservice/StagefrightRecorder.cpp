@@ -124,6 +124,21 @@ sp<IGraphicBufferProducer> StagefrightRecorder::querySurfaceMediaSource() const 
     return mGraphicBufferProducer;
 }
 
+void StagefrightRecorder::onReadAudioCb(void *context)
+{
+    ALOGV("onReadAudioCb");
+    if (context != NULL) {
+        StagefrightRecorder *sr = static_cast<StagefrightRecorder*>(context);
+        sr->onReadAudio();
+    }
+}
+
+void StagefrightRecorder::onReadAudio()
+{
+    ALOGV("onReadAudio");
+    mListener->readAudio();
+}
+
 status_t StagefrightRecorder::setAudioSource(audio_source_t as) {
     ALOGV("setAudioSource: %d", as);
     if (as < AUDIO_SOURCE_DEFAULT ||
@@ -785,6 +800,7 @@ status_t StagefrightRecorder::setParameters(const String8 &params) {
 }
 
 status_t StagefrightRecorder::setListener(const sp<IMediaRecorderClient> &listener) {
+    ALOGD("setListener");
     mListener = listener;
 
     return OK;
@@ -1016,6 +1032,14 @@ sp<MediaSource> StagefrightRecorder::createAudioSource() {
     if (err != OK) {
         ALOGE("audio source is not initialized");
         return NULL;
+    }
+
+    if (audioSource != 0) {
+        audioSource->setListener(mListener);
+        audioSource->setReadAudioCb(&StagefrightRecorder::onReadAudioCb, this);
+    }
+    else {
+        ALOGW("Can't call AudioSource::setListener since audioSource is NULL");
     }
 
     sp<AMessage> format = new AMessage;
@@ -1872,6 +1896,7 @@ void StagefrightRecorder::setupMPEG4orWEBMMetaData(sp<MetaData> *meta) {
             (*meta)->setInt64(kKeyTrackTimeStatus, mTrackEveryTimeDurationUs);
         }
         if (mRotationDegrees != 0) {
+            ALOGV("Setting rotation degrees to be %d", mRotationDegrees);
             (*meta)->setInt32(kKeyRotation, mRotationDegrees);
         }
     }

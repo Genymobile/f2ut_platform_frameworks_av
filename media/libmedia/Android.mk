@@ -89,7 +89,7 @@ endif
 LOCAL_SHARED_LIBRARIES := \
 	libui liblog libcutils libutils libbinder libsonivox libicuuc libicui18n libexpat \
         libcamera_client libstagefright_foundation \
-        libgui libdl libaudioutils libnbaio libaudioparameter
+        libgui libdl libaudioutils libnbaio libaudioparameter libpower
 
 LOCAL_STATIC_LIBRARIES += libinstantssq
 

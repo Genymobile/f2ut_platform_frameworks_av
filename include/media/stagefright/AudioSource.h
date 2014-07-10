@@ -30,6 +30,7 @@
 namespace android {
 
 class AudioRecord;
+class IMediaRecorderClient;
 
 struct AudioSource : public MediaSource, public MediaBufferObserver {
     // Note that the "channels" parameter _is_ the number of channels,
@@ -40,6 +41,8 @@ struct AudioSource : public MediaSource, public MediaBufferObserver {
             uint32_t channels = 1);
 
     status_t initCheck() const;
+
+    virtual status_t setListener(const sp<IMediaRecorderClient>& listener);
 
     virtual status_t start(MetaData *params = NULL);
     virtual status_t stop() { return reset(); }
@@ -55,6 +58,16 @@ struct AudioSource : public MediaSource, public MediaBufferObserver {
     status_t dataCallback(const AudioRecord::Buffer& buffer);
     virtual void onEvent(int event, void* info);
     virtual void signalBufferReturned(MediaBuffer *buffer);
+
+    typedef void (*on_audio_source_read_audio)(void *context);
+
+    // Pass in a function pointer to be called when more audio input data is
+    // ready to be read
+    void setReadAudioCb(on_audio_source_read_audio cb, void *context);
+
+    // Used to cause the application to place more audio data in the
+    // named pipe
+    void triggerReadAudio();
 
 protected:
     virtual ~AudioSource();
@@ -77,6 +90,9 @@ private:
     Mutex mLock;
     Condition mFrameAvailableCondition;
     Condition mFrameEncodingCompletionCondition;
+    sp<IMediaRecorderClient> mListener;
+    on_audio_source_read_audio mAudioReadCb;
+    void *mAudioReadContext;
 
     AudioRecord::Buffer mTempBuf;
     uint32_t mPrevPosition;
