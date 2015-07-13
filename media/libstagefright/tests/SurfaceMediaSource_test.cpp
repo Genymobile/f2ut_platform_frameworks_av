@@ -466,17 +466,18 @@ void SurfaceMediaSourceGLTest::oneBufferPassGL(int num) {
 // Set up the MediaRecorder which runs in the same process as mediaserver
 sp<MediaRecorder> SurfaceMediaSourceGLTest::setUpMediaRecorder(int fd, int videoSource,
         int outputFormat, int videoEncoder, int width, int height, int fps) {
-    sp<MediaRecorder> mr = new MediaRecorder();
-    mr->setVideoSource(videoSource);
-    mr->setOutputFormat(outputFormat);
-    mr->setVideoEncoder(videoEncoder);
-    mr->setOutputFile(fd, 0, 0);
-    mr->setVideoSize(width, height);
-    mr->setVideoFrameRate(fps);
-    mr->prepare();
-    ALOGV("Starting MediaRecorder...");
-    CHECK_EQ((status_t)OK, mr->start());
-    return mr;
+//     sp<MediaRecorder> mr = new MediaRecorder();
+//     mr->setVideoSource(videoSource);
+//     mr->setOutputFormat(outputFormat);
+//     mr->setVideoEncoder(videoEncoder);
+//     mr->setOutputFile(fd, 0, 0);
+//     mr->setVideoSize(width, height);
+//     mr->setVideoFrameRate(fps);
+//     mr->prepare();
+//     ALOGV("Starting MediaRecorder...");
+//     CHECK_EQ((status_t)OK, mr->start());
+//     return mr;
+     return NULL;
 }
 
 // query the mediarecorder for a surfacemeidasource and create an egl surface with that
