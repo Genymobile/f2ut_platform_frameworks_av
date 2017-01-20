@@ -504,7 +504,7 @@ status_t MediaRecorder::start()
     return ret;
 }
 
-status_t MediaRecorder::pause()
+/*status_t MediaRecorder::pause()
 {
     ALOGV("pause");
     if (mMediaRecorder == NULL) {
@@ -525,7 +525,7 @@ status_t MediaRecorder::pause()
 
     mCurrentState = MEDIA_RECORDER_PAUSED;
     return ret;
-}
+}*/
 
 status_t MediaRecorder::stop()
 {

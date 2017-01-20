@@ -42,7 +42,6 @@ LOCAL_STATIC_LIBRARIES := \
     libmedia_helper
 
 LOCAL_MODULE:= libaudiopolicyservice
-
 LOCAL_CFLAGS += -fvisibility=hidden
 
 include $(BUILD_SHARED_LIBRARY)

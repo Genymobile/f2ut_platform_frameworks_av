@@ -243,7 +243,7 @@ status_t MediaRecorderClient::start()
 
 }
 
-status_t MediaRecorderClient::pause()
+/*status_t MediaRecorderClient::pause()
 {
     ALOGV("pause");
     Mutex::Autolock lock(mLock);
@@ -252,7 +252,7 @@ status_t MediaRecorderClient::pause()
         return NO_INIT;
     }
     return mRecorder->pause();
-}
+}*/
 
 status_t MediaRecorderClient::stop()
 {

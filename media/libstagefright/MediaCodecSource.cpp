@@ -900,4 +900,11 @@ void MediaCodecSource::onMessageReceived(const sp<AMessage> &msg) {
     }
 }
 
+status_t MediaCodecSource::requestIDRFrame() {
+    if (mEncoder == NULL)
+        return NO_INIT;
+
+    return mEncoder->requestIDRFrame();
+}
+
 } // namespace android

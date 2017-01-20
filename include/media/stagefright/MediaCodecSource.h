@@ -53,6 +53,8 @@ struct MediaCodecSource : public MediaSource,
     bool isVideo() const { return mIsVideo; }
     sp<IGraphicBufferProducer> getGraphicBufferProducer();
 
+    status_t requestIDRFrame();
+
     // MediaSource
     virtual status_t start(MetaData *params = NULL);
     virtual status_t stop();
